@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-labelledby="title desc">
+  <title id="title">Rollerblades</title>
+  <desc id="desc">Two colorful rollerblades</desc>
+  <defs>
+    <linearGradient id="boot" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#62e6ef"/>
+      <stop offset="1" stop-color="#2588d8"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-12 84 82)">
+    <path d="M35 22h57v50c0 18 13 28 30 34l-8 17H30c-11 0-18-8-16-18l7-37c3-16 6-31 14-46z" fill="url(#boot)" stroke="#162447" stroke-width="7"/>
+    <path d="M38 45h49M34 62h53" fill="none" stroke="#f8fbff" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+    <path d="M26 123h103" stroke="#ffb52e" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="38" cy="139" r="10" fill="#ff5d72" stroke="#162447" stroke-width="5"/><circle cx="78" cy="139" r="10" fill="#ff5d72" stroke="#162447" stroke-width="5"/><circle cx="118" cy="139" r="10" fill="#ff5d72" stroke="#162447" stroke-width="5"/>
+  </g>
+  <g transform="translate(95 8) rotate(12 84 82) scale(.82)">
+    <path d="M35 22h57v50c0 18 13 28 30 34l-8 17H30c-11 0-18-8-16-18l7-37c3-16 6-31 14-46z" fill="#ff6b8a" stroke="#162447" stroke-width="7"/>
+    <path d="M38 45h49M34 62h53" fill="none" stroke="#fff5fb" stroke-width="7" stroke-linecap="round" opacity=".9"/>
+    <path d="M26 123h103" stroke="#ffd34e" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="38" cy="139" r="10" fill="#62e6ef" stroke="#162447" stroke-width="5"/><circle cx="78" cy="139" r="10" fill="#62e6ef" stroke="#162447" stroke-width="5"/><circle cx="118" cy="139" r="10" fill="#62e6ef" stroke="#162447" stroke-width="5"/>
+  </g>
+</svg>

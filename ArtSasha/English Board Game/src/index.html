@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<link rel="icon" href="../../favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>English Board Game</title>
+<link rel="stylesheet" href="styles.css?v=20261027-20">
+</head>
+<body>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">
+        <span>ENGLISH</span>
+        <span>BOARD</span>
+        <span>GAME</span>
+        <small>Вчимо англійські слова з вимовою!</small>
+        <small class="game-motto"><span aria-hidden="true">⭐</span> Кидай кубик, виконуй завдання <span aria-hidden="true">⚙️</span> прокачуй персонажа</small>
+        <small class="game-motto victory-motto"><span aria-hidden="true">🏆</span> Йди до перемоги!</small>
+      </h1>
+      <div>
+        <button class="btn-icon sound-btn" id="soundToggleBtn" onclick="toggleSound()" aria-label="Музика: увімкнена" title="Музика: увімкнена">🎵</button>
+        <button class="btn-icon help-btn" type="button" onclick="openInstructions()" aria-label="Як грати?" title="Як грати?">?</button>
+        <button class="btn-reset restart-btn" onclick="restartGame()" aria-label="Почати гру спочатку" title="Почати спочатку">↻</button>
+      </div>
+    </div>
+    <div class="left-column">
+      <div class="controls">
+        <img class="bot-turn-image" id="botTurnImage" src="img/robot.png" alt="Робот Франкі робить хід" hidden>
+        <div class="dice-box" id="diceDisplay" onclick="rollDice()">🎲</div>
+        <p class="game-status" id="gameStatus" aria-live="polite">Ваш хід — киньте кубик</p>
+        <button class="btn-roll" id="rollBtn" onclick="rollDice()">КИНУТИ КУБИК</button>
+      </div>
+      <div class="scoreboard" id="scoreboard"></div>
+      <a class="ad-card" href="https://atcraft.com.ua/ArtSasha/index.php" target="_blank" rel="noopener noreferrer">
+        <img class="ad-image" src="img/ArtSasha.png" alt="ArtSasha — магічний світ творчості">
+        <span class="ad-image-cta">ВІДВІДАТИ ГАЛЕРЕЮ&nbsp; →</span>
+      </a>
+      <a class="ad-card ad-card-atcraft" href="https://atcraft.com.ua/" target="_blank" rel="noopener noreferrer">
+        <img class="ad-image" src="img/aTcraft.png" alt="aTcraft — сайт">
+      </a>
+    </div>
+    <div class="board-grid" id="boardGrid"></div>
+  </div>
+
+  <footer class="game-footer">
+    <span class="footer-decor">🎃</span>
+    <span class="footer-decor">🕯️</span>
+    <span class="footer-text">Halloween English Night · Learn &amp; Play</span>
+    <span class="footer-decor">🕯️</span>
+    <span class="footer-decor">🎃</span>
+  </footer>
+
+  <div class="turn-reminder-overlay" id="turnReminderModal" role="dialog" aria-modal="true" aria-labelledby="turnReminderTitle">
+    <div class="turn-reminder-card">
+      <div class="turn-reminder-icon">🎃</div>
+      <h2 id="turnReminderTitle">Твій хід!</h2>
+      <p id="turnReminderText">Час кидати кубик і виконувати завдання.</p>
+      <button class="turn-reminder-btn" type="button" onclick="closeTurnReminder()">Я готовий!</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="questionModal">
+    <div class="modal-card">
+      <img class="bot-turn-image bot-task-image" id="botTaskImage" src="img/robot.png" alt="Робот Франкі виконує завдання" hidden>
+      <div class="modal-header" id="modalHeader">КЛІТИНКА 1</div>
+      <div class="modal-prompt" id="modalPrompt">
+        <span id="promptText">Say: pumpkin</span>
+        <button class="btn-icon" onclick="playCurrentPromptSound()">🔊</button>
+      </div>
+      <div class="modal-img" id="modalImg">🎃</div>
+      <input class="answer-input" id="answerInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Напиши слово англійською" aria-label="Введи відповідь англійською">
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="answer-feedback" id="answerFeedback" role="status" aria-live="polite"></div>
+      <button class="btn-submit" id="submitBtn" onclick="confirmAnswer()" disabled>ПЕРЕВІРИТИ</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay effect-modal-overlay" id="effectModal" role="dialog" aria-modal="true" aria-labelledby="effectModalTitle">
+    <div class="modal-card effect-modal-card">
+      <div class="effect-modal-icon" id="effectModalIcon">🎃</div>
+      <div class="effect-modal-badge" id="effectModalBadge">SPECIAL CELL</div>
+      <h2 id="effectModalTitle">Особлива клітинка</h2>
+      <p id="effectModalText">На тебе чекає сюрприз!</p>
+      <button class="effect-modal-btn" id="effectModalBtn" type="button" onclick="closeEffectModal()">Зрозуміло!</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="miniGameModal" role="dialog" aria-modal="true" aria-labelledby="miniGameTitle">
+    <div class="modal-card mini-game-card">
+      <div class="modal-header" id="miniGameBadge">МІНІІГРА</div>
+      <h2 class="mini-game-title" id="miniGameTitle">Творче завдання</h2>
+      <p class="mini-game-description" id="miniGameDescription"></p>
+      <div id="miniGameContent" class="mini-game-content"></div>
+      <div id="miniGameFeedback" class="mini-game-feedback" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="instructionsModal" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
+    <div class="modal-card instructions-card">
+      <button class="profile-close-btn" type="button" onclick="closeInstructions()" aria-label="Закрити інструкцію">×</button>
+      <h2 class="setup-title" id="instructionsTitle">🎲 Як грати?</h2>
+      <div class="instructions-content">
+        <p><strong>1.</strong> Обери ім’я та героя, потім натисни «Почати гру».</p>
+        <p><strong>2.</strong> Кидай кубик і рухайся по ігровому полю.</p>
+        <p><strong>3.</strong> На звичайній клітинці виконай англійське завдання.</p>
+        <p><strong>4.</strong> На спеціальних клітинках тебе чекають бонуси, пропуск ходу та мініігри.</p>
+        <p><strong>5.</strong> Правильна відповідь дає <strong>+10 балів</strong>, а перемога в мінігрі — <strong>+20 балів і зірочок</strong>.</p>
+        <p><strong>6.</strong> Зірочки відкривають нових героїв і аксесуари в профілі ⚙️.</p>
+        <p><strong>7.</strong> Перемагає гравець, який першим дійде до фінішу.</p>
+      </div>
+      <button class="setup-start-btn profile-save-btn" type="button" onclick="closeInstructions()">ЗРОЗУМІЛО</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay active" id="setupModal">
+    <div class="modal-card setup-card">
+      <h2 class="setup-title">🎃 ENGLISH BOARD GAME</h2>
+      <p class="setup-subtitle">Підготуйся до англійської пригоди!</p>
+      <label class="setup-label" for="playerNameInput">Твоє ім’я</label>
+      <input class="setup-name-input" id="playerNameInput" type="text" maxlength="20" placeholder="Напиши своє ім’я" autocomplete="name">
+      <div class="additional-player hidden" id="player2Field">
+        <label class="setup-label" for="playerName2Input">Ім’я гравця 2</label>
+        <input class="setup-name-input" id="playerName2Input" type="text" maxlength="20" placeholder="Ім’я другого гравця">
+      </div>
+      <div class="additional-player hidden" id="player3Field">
+        <label class="setup-label" for="playerName3Input">Ім’я гравця 3</label>
+        <input class="setup-name-input" id="playerName3Input" type="text" maxlength="20" placeholder="Ім’я третього гравця">
+      </div>
+      <div class="setup-count-title">Кількість гравців</div>
+      <div class="setup-count-options" role="group" aria-label="Кількість гравців">
+        <button class="setup-count-btn active" type="button" onclick="selectSetupPlayerCount(1, this)">1 гравець + 🤖</button>
+        <button class="setup-count-btn" type="button" onclick="selectSetupPlayerCount(2, this)">2 гравці</button>
+        <button class="setup-count-btn" type="button" onclick="selectSetupPlayerCount(3, this)">3 гравці</button>
+      </div>
+      <p class="setup-error" id="setupError" role="alert" aria-live="polite"></p>
+      <button class="setup-start-btn" type="button" onclick="startGame()">🚀 ПОЧАТИ ГРУ</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+    <div class="modal-card setup-card profile-modal-card">
+      <button class="profile-close-btn" type="button" onclick="closeProfileModal()" aria-label="Закрити налаштування профілю">×</button>
+      <h2 class="setup-title" id="profileModalTitle">Профіль гравця</h2>
+      <p class="setup-subtitle" id="profileModalPlayerName"></p>
+      <div class="profile-choice-block">
+        <div class="setup-count-title">Обери свого героя</div>
+        <div class="avatar-options" id="avatarOptions" role="group" aria-label="Аватар героя"></div>
+        <div class="profile-stars" id="profileStars">⭐ Зірочки: 0</div>
+        <div class="setup-count-title">Аксесуари героя</div>
+        <div class="accessory-options" id="accessoryOptions" role="group" aria-label="Аксесуари героя"></div>
+      </div>
+      <button class="setup-start-btn profile-save-btn" type="button" onclick="closeProfileModal()">ЗБЕРЕГТИ</button>
+    </div>
+  </div>
+
+<script src="script.js?v=20261027-41"></script>
+</body>
+</html>

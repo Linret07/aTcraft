@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Гра на сторінці</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Rubik+Mono+One&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f2efe8;
+      --ink: #152033;
+      --card: #fffdf8;
+      --sun: #ffd47d;
+      --leaf: #157347;
+      --line: #d5c8b2;
+      --accent: #e85d23;
+      --accent-dark: #b43f12;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, #ffeec3 0, transparent 35%),
+        radial-gradient(circle at 92% 12%, #d8f3c8 0, transparent 28%),
+        linear-gradient(130deg, #f8f5ed 0%, #efe6d8 100%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 24px 14px 40px;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
+    }
+
+    .page {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero {
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(253, 246, 233, 0.94));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(21, 32, 51, 0.08);
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(140deg, var(--accent), var(--accent-dark));
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(232, 93, 35, 0.35);
+      transition: transform 0.2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .tag {
+      font-family: "Rubik Mono One", sans-serif;
+      font-size: clamp(12px, 2.8vw, 16px);
+      color: var(--leaf);
+      letter-spacing: 0.8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4.5vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -0.4px;
+    }
+
+    .description {
+      margin: 0;
+      color: #304258;
+      font-size: clamp(15px, 2.7vw, 20px);
+      max-width: 780px;
+      font-weight: 600;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      grid-column: span 4;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff;
+      font-size: 13px;
+      color: #2f3f54;
+      font-weight: 700;
+    }
+
+    main {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    .frame-wrap {
+      position: relative;
+      border: 1px solid var(--line);
+      background: #f7efe0;
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9.8;
+      box-shadow: 0 22px 48px rgba(21, 32, 51, 0.18);
+      touch-action: manipulation;
+    }
+
+    .frame-wrap:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border: 0;
+      border-radius: 0;
+      background: #101923;
+    }
+    .frame-wrap:fullscreen iframe {
+      width: 100%;
+      height: 100%;
+      transform: none;
+    }
+    .frame-wrap:fullscreen .fullscreen-btn {
+      width: 62px;
+      height: 62px;
+      min-height: 62px;
+      padding: 0;
+      justify-content: center;
+      font-size: 0;
+    }
+    .frame-wrap:fullscreen .fullscreen-btn::after {
+      content: "×";
+      font-size: 44px;
+      line-height: 1;
+    }
+    body.game-fullscreen-active { overflow: hidden; }
+    .frame-wrap.game-fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      width: 100vw;
+      height: 100vh;
+      border: 0;
+      border-radius: 0;
+      background: #101923;
+    }
+    .frame-wrap.game-fullscreen iframe {
+      width: 100%;
+      height: 100%;
+      transform: none;
+    }
+    .frame-wrap.game-fullscreen .fullscreen-btn {
+      width: 62px;
+      height: 62px;
+      min-height: 62px;
+      padding: 0;
+      justify-content: center;
+      font-size: 0;
+      border-radius: 50%;
+    }
+    .frame-wrap.game-fullscreen .fullscreen-btn::after {
+      content: "×";
+      font-size: 44px;
+      line-height: 1;
+    }
+    @media (max-width: 920px) and (orientation: portrait) {
+      .frame-wrap.game-fullscreen .fullscreen-btn,
+      .frame-wrap:fullscreen .fullscreen-btn { display: none; }
+    }
+    @media (max-width: 920px) and (orientation: landscape) {
+      .frame-wrap.game-fullscreen .fullscreen-btn,
+      .frame-wrap:fullscreen .fullscreen-btn { display: inline-flex; }
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #101923;
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 999px;
+      background: rgba(21, 32, 51, .78);
+      color: #fff;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+    .fullscreen-btn:hover { background: rgba(21, 32, 51, .94); }
+
+    .warn {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .mobile-hint {
+      display: none;
+      margin: 0;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      background: #fff8ea;
+      padding: 10px 12px;
+      color: #5b3c12;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .mobile-controls {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .arrow-hint {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(21, 32, 51, 0.18);
+      color: #223246;
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(21, 32, 51, 0.16);
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+      animation: float-pulse 1.9s ease-in-out infinite;
+      pointer-events: auto;
+      border: 1px solid rgba(21, 32, 51, 0.18);
+      cursor: pointer;
+    }
+
+    .arrow-left {
+      left: 16px;
+      bottom: 28px;
+    }
+
+    .arrow-right {
+      left: 142px;
+      bottom: 28px;
+    }
+
+    .arrow-down {
+      left: 79px;
+      bottom: 8px;
+    }
+
+    .arrow-up {
+      left: 79px;
+      bottom: 92px;
+    }
+
+    @keyframes float-pulse {
+      0%, 100% {
+        opacity: 0.66;
+        box-shadow: 0 8px 20px rgba(21, 32, 51, 0.16);
+      }
+      50% {
+        opacity: 0.96;
+        box-shadow: 0 12px 28px rgba(21, 32, 51, 0.28);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .chip {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 10px 8px 20px;
+      }
+
+      .page {
+        gap: 10px;
+      }
+
+      .hero {
+        border-radius: 18px;
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .hero-top {
+        align-items: flex-start;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .tag {
+        font-size: 11px;
+      }
+
+      .chip {
+        grid-column: span 12;
+        font-size: 12px;
+        padding: 9px 10px;
+      }
+
+      .status {
+        padding: 10px 11px;
+        font-size: 13px;
+      }
+
+      .frame-wrap {
+        border-radius: 14px;
+        aspect-ratio: 16 / 10;
+        min-height: 0;
+        height: min(32svh, 220px);
+        position: relative;
+      }
+
+      .frame-wrap iframe {
+        width: 140%;
+        height: 140%;
+        transform: scale(.7142857);
+        transform-origin: top left;
+      }
+
+      .mobile-controls {
+        display: block;
+      }
+
+      .arrow-hint {
+        width: 54px;
+        height: 54px;
+        font-size: 25px;
+      }
+
+      .fullscreen-btn { top: 8px; right: 8px; min-height: 34px; padding: 0 10px; }
+
+    }
+
+    @media (max-width: 920px) and (orientation: landscape) {
+      body {
+        padding: 8px 10px 12px;
+      }
+
+      .hero {
+        padding: 10px 12px;
+      }
+
+      .hero-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .chip {
+        grid-column: span 1;
+      }
+
+      .frame-wrap {
+        height: 72svh;
+      }
+
+      .mobile-controls { display: block; }
+      .frame-wrap iframe { width: 100%; height: 100%; transform: none; }
+      .arrow-left { left: 14px; bottom: 18px; }
+      .arrow-right { left: 142px; bottom: 18px; }
+      .arrow-down { left: 78px; bottom: 0; }
+      .arrow-up { left: 78px; bottom: 92px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back-btn" id="back-button" href="../index.php">← Назад</a>
+        <div class="tag">SHOWCASE MODE</div>
+      </div>
+      <h1>Дорога Додому: пригоди Джонні</h1>
+      <p class="description">Допоможи яблуку Джонні знайти свій будинок. Перевір свою ловкість пальців.</p>
+      <div class="hero-grid">
+        <div class="chip">Формат: аркадна платформа</div>
+        <div class="chip">Керування: дотик / клавіатура</div>
+        <div class="chip">Мета: дістатися порталу</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="frame-wrap">
+        <iframe id="player" allow="autoplay; fullscreen; gamepad" allowfullscreen title="Game Player"></iframe>
+        <button class="fullscreen-btn" id="fullscreen-button" type="button" aria-label="Відкрити гру на весь екран">⛶ На весь екран</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var iframe = document.getElementById('player');
+      var frameWrap = document.querySelector('.frame-wrap');
+      var fullscreenButton = document.getElementById('fullscreen-button');
+
+      if (location.protocol === 'file:') {
+        console.warn('Відкрито як файл. Для запуску гри відкрийте цю сторінку через локальний сервер.');
+        return;
+      }
+
+      var basePath = location.pathname.replace(/\/[^/]*$/, '/');
+      var projectUrl = location.origin + basePath + 'game.php';
+      var playerUrl = 'https://turbowarp.org/embed?autoplay&project_url=' + encodeURIComponent(projectUrl);
+
+      iframe.setAttribute('tabindex', '0');
+      iframe.src = playerUrl;
+
+      if (frameWrap) {
+        frameWrap.addEventListener('pointerdown', function () {
+          iframe.focus();
+        });
+      }
+
+      if (fullscreenButton && frameWrap) {
+        fullscreenButton.addEventListener('click', function () {
+          if (document.fullscreenElement === frameWrap) {
+            if (document.exitFullscreen) document.exitFullscreen();
+            return;
+          }
+          var request = frameWrap.requestFullscreen || frameWrap.webkitRequestFullscreen;
+          if (!request) return;
+          Promise.resolve(request.call(frameWrap)).then(function () {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock('landscape').catch(function () {});
+            }
+          }).catch(function () {});
+        });
+      }
+
+      document.addEventListener('fullscreenchange', function () {
+        if (!fullscreenButton) return;
+        var active = document.fullscreenElement === frameWrap;
+        fullscreenButton.setAttribute('aria-label', active ? 'Вийти з повного екрана' : 'Відкрити гру на весь екран');
+      });
+
+    })();
+  </script>
+</body>
+</html>

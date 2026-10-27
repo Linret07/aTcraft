@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+# Local/editor and operating-system files
+.idea/
+Thumbs.db
+*.log
+
+# Nested repositories must not be published as part of the root repository
+.git
+.git/
+**/.git.backup/
+
+# Local XAMPP runtime files
+xampp/

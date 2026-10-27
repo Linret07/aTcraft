@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^proxy(?:/(.*))?$ proxy.php?path=/$1 [L,QSA,NE]
